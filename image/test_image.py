@@ -1,4 +1,5 @@
-from image import Image
+from image import Image, UnmachtingSizeError
+from pytest import raises
 
 
 def test__str__():
@@ -38,4 +39,25 @@ def test_add_empty_image():
     image2 = Image(2, 2)
     result = "200 144 \n0 55 \n"
     image3 = image + image2
+    assert str(image3) == result
+
+
+def test_add_two_unmatching_images():
+    data = [(0, 0, 200), (0, 1, 144), (1, 1, 55)]
+    image = Image(2, 2, data)
+    image2 = Image(5, 5)
+    with raises(UnmachtingSizeError):
+        image + image2
+
+
+def test_subtract_two_images():
+    data = [
+         (0, 1, 122), (0, 2, 21), (1, 1, 112),
+         (1, 2, 30), (2, 0, 11), (2, 1, 44),
+         (2, 2, 31)]
+    data2 = [(0, 1, 122), (0, 2, 1)]
+    result = "0 0 20 \n0 112 30 \n11 44 31 \n"
+    image = Image(3, 3, data)
+    image2 = Image(3, 3, data2)
+    image3 = image - image2
     assert str(image3) == result
